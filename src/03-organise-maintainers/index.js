@@ -55,20 +55,19 @@ module.exports = async function organiseMaintainers() {
   try {
     const response = await axios.post(BASE_URL, reqPayload);
 
-    // At first, we're storing the required data into the variable "allDeps"
+    // Store the required data into the variable "allDeps"
     const allDeps = response.data.content;
 
-    // this is where we'll be storing all the maintainers name of all the packages
-    // from the data
+    // Store the maintainers for all data packages.
     let allMaintainers = [];
 
-    // Looping through all the packages to get all of its maintainer usernames
+    // Loop through the packages to get maintainer usernames
     allDeps.forEach(dep => {
       allMaintainers.push(...dep.package.maintainers.map(m => m.username));
     });
 
-    // by using Set, we can get the unique values
-    // in our case we're passing all maintainers name to get the unique maintainers' names
+    // Use Set, to get the unique values
+    // This will be passing all names in the maintainer.
     const uniqueMaintainers = [...new Set(allMaintainers)];
 
     // Sorting the names
@@ -77,10 +76,9 @@ module.exports = async function organiseMaintainers() {
     // acc -> accumulator (previous value)
     // cur -> current
 
-    // "acc" will store all the "returned values" from the current iterations
+    // "acc" will store the "returned values" from the current iterations
     // Initially, "acc" will hold the empty array
-    // In each iteration, we'll be pushing the object with following structure to the
-    // "acc" array, and will return it
+    // In each iteration, we'll be pushing the object to the "acc" array, and will return it
     // so end of the first iteration the "acc" array will have one object in it
     // and on end of the second iteration the "acc" array will have two objects and following
 
@@ -91,27 +89,24 @@ module.exports = async function organiseMaintainers() {
 
     // In our case, we're using reduce method in uniqueMaintainers array
     const maintainers = uniqueMaintainers.reduce((acc, cur) => {
-      // First we're looping through all the deps, to find which packages have
-      // the current maintainers name in it
+      // First we're looping through all the deps, to find which packages have the current maintainers.
       const maintainerDeps = allDeps.filter(dep =>
         dep.package.maintainers.some(m => m.username === cur),
       );
 
-      // this is where we'll be storing all the packages name of the
-      // current maintainer
+      // We store all the package names in the current maintainer
       const packageNames = [];
 
-      // By looping through the current maintainers' deps, we're pushing only the package name
-      // to the packageNames array
+      // Looping through the current maintainers' deps, we puch the package name to the packageNames array
       maintainerDeps.forEach(dep => packageNames.push(dep.package.name));
 
-      // sorting the packageNames which is required
+      // Sorting the packageNames which is required
       packageNames.sort();
 
-      // finally pushing the object in the required structure
+      // Pushing the object in the required structure
       acc.push({ username: cur, packageNames });
 
-      // return statement here is important, which will be used in the next iteration
+      // return statement here is important... it will be used in the next iteration
       return acc;
     }, []);
 

@@ -49,15 +49,15 @@ module.exports = async function countMajorVersionsAbove10() {
     let count = 0;
     const response = await axios.post(BASE_URL, reqPayload);
 
-    // Looping through each dependencies
+    // Loop through each dependency
     response.data.content.forEach(dep => {
-      // let's say version is "17.0.2"
-      // and we can split it by dot, so we'll get an array ["17", "0", "2"]
-      // the first element will be major version and maybe in a string type
-      // so we can parse that string back to the integer
-      // if that major version is greater than our minimum required version
+      // Assume we the version is "17.0.2"
+      // Splitting each element by the "." we'll get an array ["17", "0", "2"]
+      // The first element will be the major version and possibly a string
+      // We'll then parse the string back to the integer
+      // If the major version is greater than our minimum required version
       // we'll increase the count by 1
-      // so end of the loop, we'll have our count of the packages
+      // At the end of each loop we'll have our count of the packages
       const majorSemVer = dep.package.version.split('.')[0];
       if (parseInt(majorSemVer, 10) > MIN_REQUIRED_VERSION) {
         count += 1;
